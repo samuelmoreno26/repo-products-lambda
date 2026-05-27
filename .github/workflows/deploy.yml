@@ -1,4 +1,4 @@
-name: Deploy Lambda Productos
+name: Deploy Lambda
 
 on:
   push:
@@ -8,27 +8,31 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
 
-      - name: Zip Function
-        run: zip -r function.zip .
+      - name: Zip Lambda
+        run: zip -r lambda.zip .
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Update AWS Lambda
-        run: aws lambda update-function-code --function-name megastore-productos --zip-file fileb://function.zip
+      - name: Deploy Lambda
+        run: |
+          aws lambda update-function-code \
+          --function-name mega-taller-productos \
+          --zip-file fileb://lambda.zip
